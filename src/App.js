@@ -62,6 +62,7 @@ function App() {
   const [showAchievements, setShowAchievements] = useState(false)
   const [newAchievement, setNewAchievement] = useState(null)
   const [showProfile, setShowProfile] = useState(false)
+  const [gameType, setGameType] = useState('normal') // 'normal' or 'rapid'
 
   const makeAIMove = useCallback(async () => {
     setIsAIThinking(true)
@@ -122,15 +123,17 @@ function App() {
   }, [])
 
   function handleStartGame() {
-    if (!timeControl) {
-      alert('Please select a time control')
+    if (gameType === 'rapid' && !timeControl) {
+      alert('Please select a time control for rapid game')
       return
     }
 
     setIsGameStarted(true)
     setShowSetup(false)
-    // Reset the timer key to ensure timer starts fresh
-    setTimerKey(prev => prev + 1)
+    // Reset the timer key only for rapid games
+    if (gameType === 'rapid') {
+      setTimerKey(prev => prev + 1)
+    }
     // Initialize the game state
     setBoard(initializeBoard())
     setCurrentPlayer('white')
@@ -599,6 +602,109 @@ function App() {
     }
   }, [isGameOver])
 
+  // Update the game setup component
+  function GameSetup() {
+    return (
+      <div className="game-setup">
+        <h2>Game Setup</h2>
+        
+        {/* Add game type selection */}
+        <div className="mode-selection">
+          <h3>Game Type</h3>
+          <div className="mode-buttons">
+            <button 
+              className={`mode-button ${gameType === 'normal' ? 'active' : ''}`}
+              onClick={() => {
+                setGameType('normal')
+                setTimeControl(0) // Disable timer for normal mode
+              }}
+            >
+              Normal
+            </button>
+            <button 
+              className={`mode-button ${gameType === 'rapid' ? 'active' : ''}`}
+              onClick={() => {
+                setGameType('rapid')
+                setTimeControl(600) // Default to 10 minutes for rapid
+              }}
+            >
+              Rapid
+            </button>
+          </div>
+        </div>
+
+        <div className="mode-selection">
+          <h3>Select Opponent</h3>
+          <div className="mode-buttons">
+            <button 
+              className={`mode-button ${gameMode === 'human' ? 'active' : ''}`}
+              onClick={() => setGameMode('human')}
+            >
+              Human
+            </button>
+            <button 
+              className={`mode-button ${gameMode === 'computer' ? 'active' : ''}`}
+              onClick={() => setGameMode('computer')}
+            >
+              Computer
+            </button>
+          </div>
+        </div>
+
+        {gameMode === 'computer' && (
+          <div className="difficulty-selection">
+            <h3>Select Difficulty</h3>
+            <div className="difficulty-buttons">
+              {['beginner', 'intermediate', 'advanced', 'expert'].map((level) => (
+                <button
+                  key={level}
+                  className={`difficulty-button ${difficulty === level ? 'active' : ''} ${level}`}
+                  onClick={() => setDifficulty(level)}
+                >
+                  {level.charAt(0).toUpperCase() + level.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Only show time selection for rapid games */}
+        {gameType === 'rapid' && (
+          <div className="time-selection">
+            <h3>Select Time Control</h3>
+            <div className="time-buttons">
+              <button 
+                className={`time-button ${timeControl === 180 ? 'active' : ''}`}
+                onClick={() => handleTimeControlChange(3)}
+              >
+                3 min
+              </button>
+              <button 
+                className={`time-button ${timeControl === 300 ? 'active' : ''}`}
+                onClick={() => handleTimeControlChange(5)}
+              >
+                5 min
+              </button>
+              <button 
+                className={`time-button ${timeControl === 600 ? 'active' : ''}`}
+                onClick={() => handleTimeControlChange(10)}
+              >
+                10 min
+              </button>
+            </div>
+          </div>
+        )}
+
+        <button 
+          className="start-button"
+          onClick={handleStartGame}
+        >
+          Start Game
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="App" style={{
       '--light-square': theme.light,
@@ -606,99 +712,29 @@ function App() {
     }}>
       {showMenu && <Menu />}
       
-      {!showMenu && showSetup && (
-        <div className="game-container">
-          <div className="game-setup">
-            <h2>Game Setup</h2>
-            
-            <div className="mode-selection">
-              <h3>Select Opponent</h3>
-              <div className="mode-buttons">
-                <button 
-                  className={`mode-button ${gameMode === 'human' ? 'active' : ''}`}
-                  onClick={() => setGameMode('human')}
-                >
-                  Human
-                </button>
-                <button 
-                  className={`mode-button ${gameMode === 'computer' ? 'active' : ''}`}
-                  onClick={() => setGameMode('computer')}
-                >
-                  Computer
-                </button>
-              </div>
-            </div>
-
-            {gameMode === 'computer' && (
-              <div className="difficulty-selection">
-                <h3>Select Difficulty</h3>
-                <div className="difficulty-buttons">
-                  {['beginner', 'intermediate', 'advanced', 'expert'].map((level) => (
-                    <button
-                      key={level}
-                      className={`difficulty-button ${difficulty === level ? 'active' : ''} ${level}`}
-                      onClick={() => setDifficulty(level)}
-                    >
-                      {level.charAt(0).toUpperCase() + level.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="time-selection">
-              <h3>Select Time Control</h3>
-              <div className="time-buttons">
-                <button 
-                  className={`time-button ${timeControl === 180 ? 'active' : ''}`}
-                  onClick={() => handleTimeControlChange(3)}
-                >
-                  3 min
-                </button>
-                <button 
-                  className={`time-button ${timeControl === 300 ? 'active' : ''}`}
-                  onClick={() => handleTimeControlChange(5)}
-                >
-                  5 min
-                </button>
-                <button 
-                  className={`time-button ${timeControl === 600 ? 'active' : ''}`}
-                  onClick={() => handleTimeControlChange(10)}
-                >
-                  10 min
-                </button>
-              </div>
-            </div>
-
-            <button 
-              className="start-button"
-              onClick={handleStartGame}
-            >
-              Start Game
-            </button>
-          </div>
-          <ThemeSelector />
-        </div>
-      )}
+      {!showMenu && showSetup && <GameSetup />}
       
       {!showMenu && !showSetup && isGameStarted && (
         <div className="game-container">
-          <div className="timers-container">
-            <Timer 
-              initialTime={timeControl}
-              isActive={isGameStarted && currentPlayer === 'black'}
-              onTimeUp={handleTimeUp}
-              color="black"
-              key={`black-${timerKey}`}
-            />
-            <Timer
-              initialTime={timeControl}
-              isActive={isGameStarted && currentPlayer === 'white'}
-              onTimeUp={handleTimeUp}
-              color="white"
-              key={`white-${timerKey}`}
-            />
-          </div>
+          {/* Only show timers for rapid games */}
+          {gameType === 'rapid' && (
+            <div className="timers-container">
+              <Timer 
+                initialTime={timeControl}
+                isActive={isGameStarted && currentPlayer === 'black'}
+                onTimeUp={handleTimeUp}
+                color="black"
+                key={`black-${timerKey}`}
+              />
+              <Timer
+                initialTime={timeControl}
+                isActive={isGameStarted && currentPlayer === 'white'}
+                onTimeUp={handleTimeUp}
+                color="white"
+                key={`white-${timerKey}`}
+              />
+            </div>
+          )}
           
           <div className="board">
             {/* Add animated piece layer */}
