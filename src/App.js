@@ -5,6 +5,13 @@ import { getBestMove } from './ai/chessAI'
 import './App.css'
 import { achievements, AchievementsModal, AchievementPopup } from './components/Achievements'
 
+// At the top of your file, import the sounds
+const moveSound = new Audio('/sounds/move.wav')
+const captureSound = new Audio('/sounds/capture.mp3')
+const checkSound = new Audio('/sounds/check.mp3')
+const gameStartSound = new Audio('/sounds/game-start.mp3')
+const gameEndSound = new Audio('/sounds/game-end.mp3')
+
 // Add theme options
 const BOARD_THEMES = {
   'Classic': {
@@ -63,6 +70,8 @@ function App() {
   const [newAchievement, setNewAchievement] = useState(null)
   const [showProfile, setShowProfile] = useState(false)
   const [gameType, setGameType] = useState('normal') // 'normal' or 'rapid'
+  const [gameResult, setGameResult] = useState(null) // 'checkmate', 'stalemate', 'draw'
+  const [winner, setWinner] = useState(null) // 'white' or 'black'
 
   const makeAIMove = useCallback(async () => {
     setIsAIThinking(true)
@@ -123,6 +132,9 @@ function App() {
   }, [])
 
   function handleStartGame() {
+    gameStartSound.currentTime = 0
+    gameStartSound.play()
+    
     if (gameType === 'rapid' && !timeControl) {
       alert('Please select a time control for rapid game')
       return
@@ -194,6 +206,18 @@ function App() {
   }
 
   const handleMove = async (fromRow, fromCol, toRow, toCol, piece) => {
+    // Check if it's a capture move
+    const isCapture = board[toRow][toCol] !== null
+    
+    // Play appropriate sound
+    if (isCapture) {
+      captureSound.currentTime = 0
+      captureSound.play()
+    } else {
+      moveSound.currentTime = 0
+      moveSound.play()
+    }
+
     // Start animation
     setAnimatingFrom({ row: fromRow, col: fromCol })
     setAnimatingTo({ row: toRow, col: toCol })
@@ -202,16 +226,31 @@ function App() {
     // Wait for animation to complete
     await new Promise(resolve => setTimeout(resolve, 300))
 
-    // Update board
-    const newBoard = [...board.map(row => [...row])]
+    // Create new board state
+    const newBoard = board.map(row => [...row])
     newBoard[toRow][toCol] = board[fromRow][fromCol]
     newBoard[fromRow][fromCol] = null
+    
+    // Update board state
     setBoard(newBoard)
+    
+    // Add to move history
+    const moveNotation = `${getPieceNotation(piece)}${getSquareNotation(fromRow, fromCol)}-${getSquareNotation(toRow, toCol)}`
+    setMoveHistory(prev => [...prev, moveNotation])
+    
+    // Add to board history
+    setBoardHistory(prev => [...prev, newBoard])
+    setCurrentMove(prev => prev + 1)
 
     // Clear animation states
     setAnimatingFrom(null)
     setAnimatingTo(null)
     setAnimatingPiece(null)
+
+    // Check for game end conditions
+    if (!checkGameEnd(newBoard, currentPlayer)) {
+      setCurrentPlayer(currentPlayer === 'white' ? 'black' : 'white')
+    }
   }
 
   async function handleSquareClick(row, col) {
@@ -262,50 +301,57 @@ function App() {
   }
 
   function handleRestart() {
-    // Reset game states but keep the game running
+    // Reset all game state
     setBoard(initializeBoard())
-    setBoardHistory([initializeBoard()])
-    setCurrentMove(0)
-    setMoveHistory([])
     setSelectedPiece(null)
-    setValidMoves([])
     setCurrentPlayer('white')
+    setValidMoves([])
     setIsCheck(false)
     setIsGameOver(false)
     setPromotionSquare(null)
+    setMoveHistory([])
+    setBoardHistory([initializeBoard()])
+    setCurrentMove(0)
+    setGameResult(null)
+    setWinner(null)
     
-    // Reset timer
-    setTimerKey(prev => prev + 1)
-    
-    // Keep the game started and setup hidden
-    setIsGameStarted(true)
-    setShowSetup(false)
+    // Reset timer for rapid games
+    if (gameType === 'rapid') {
+      setTimerKey(prev => prev + 1)
+    }
   }
 
   function handleUndo() {
-    if (currentMove === 0) return // Can't undo past initial position
+    // Don't allow undo if no moves have been made
+    if (moveHistory.length === 0 || currentMove === 0) return
+    
+    // Get the previous board state
+    const previousBoard = boardHistory[currentMove - 1]
+    
+    // Update state
+    setBoard(previousBoard)
+    setCurrentMove(prev => prev - 1)
+    setCurrentPlayer(prev => prev === 'white' ? 'black' : 'white')
+    setSelectedPiece(null)
+    setValidMoves([])
     
     // Remove last move from history
     const newMoveHistory = [...moveHistory]
     newMoveHistory.pop()
     setMoveHistory(newMoveHistory)
     
-    // Go back one move in board history
-    const newCurrentMove = currentMove - 1
-    setCurrentMove(newCurrentMove)
-    setBoard(boardHistory[newCurrentMove])
+    // Remove last board from history
+    const newBoardHistory = [...boardHistory]
+    newBoardHistory.pop()
+    setBoardHistory(newBoardHistory)
     
-    // Update current player
-    setCurrentPlayer(currentPlayer === 'white' ? 'black' : 'white')
-    
-    // Reset game state
-    setSelectedPiece(null)
-    setValidMoves([])
+    // Reset game over state if it was set
     setIsGameOver(false)
-    setPromotionSquare(null)
+    setGameResult(null)
+    setWinner(null)
     
-    // Check if the position is a check
-    const isPlayerInCheck = isInCheck(boardHistory[newCurrentMove], currentPlayer === 'white' ? 'black' : 'white')
+    // Check if the new position is a check
+    const isPlayerInCheck = isInCheck(previousBoard, currentPlayer === 'white' ? 'black' : 'white')
     setIsCheck(isPlayerInCheck)
   }
 
@@ -705,6 +751,117 @@ function App() {
     )
   }
 
+  // Add these helper functions
+  const isKingInCheck = (board, color) => {
+    // Find the king's position
+    let kingPosition = null
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = board[row][col]
+        if (piece && piece.color === color && piece.symbol === '♔') {
+          kingPosition = { row, col }
+          break
+        }
+      }
+      if (kingPosition) break
+    }
+
+    if (!kingPosition) return false
+
+    // Check if any opponent's piece can capture the king
+    const opponentColor = color === 'white' ? 'black' : 'white'
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = board[row][col]
+        if (piece && piece.color === opponentColor) {
+          const moves = getLegalMoves(board, row, col)
+          if (moves.some(([r, c]) => r === kingPosition.row && c === kingPosition.col)) {
+            return true
+          }
+        }
+      }
+    }
+    return false
+  }
+
+  const getAllLegalMoves = (board, color) => {
+    let allMoves = []
+    
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = board[row][col]
+        if (piece && piece.color === color) {
+          const moves = getLegalMoves(board, row, col)
+          // Add the from position to each move
+          const movesWithFrom = moves.map(([toRow, toCol]) => ({
+            from: { row, col },
+            to: { row: toRow, col: toCol }
+          }))
+          allMoves = [...allMoves, ...movesWithFrom]
+        }
+      }
+    }
+    
+    // Filter out moves that would leave the king in check
+    return allMoves.filter(move => {
+      const newBoard = simulateMove(board, move.from, move.to)
+      return !isKingInCheck(newBoard, color)
+    })
+  }
+
+  // Add this helper function to simulate a move without modifying the original board
+  const simulateMove = (board, from, to) => {
+    const newBoard = board.map(row => [...row])
+    newBoard[to.row][to.col] = newBoard[from.row][from.col]
+    newBoard[from.row][from.col] = null
+    return newBoard
+  }
+
+  // Update the checkGameEnd function to use these helpers
+  const checkGameEnd = (newBoard, player) => {
+    const opponent = player === 'white' ? 'black' : 'white'
+    const isInCheck = isKingInCheck(newBoard, opponent)
+    const hasLegalMoves = getAllLegalMoves(newBoard, opponent).length > 0
+
+    if (isInCheck && !hasLegalMoves) {
+      setIsGameOver(true)
+      setGameResult('checkmate')
+      setWinner(player)
+      return true
+    } else if (!isInCheck && !hasLegalMoves) {
+      setIsGameOver(true)
+      setGameResult('stalemate')
+      return true
+    }
+    return false
+  }
+
+  // Add a GameOver component
+  function GameOver({ result, winner, onRestart }) {
+    useEffect(() => {
+      gameEndSound.currentTime = 0
+      gameEndSound.play()
+    }, [])
+    
+    return (
+      <div className="game-over-modal">
+        <div className="game-over-content">
+          <h2>Game Over</h2>
+          <p>
+            {result === 'checkmate' 
+              ? `Checkmate! ${winner.charAt(0).toUpperCase() + winner.slice(1)} wins!`
+              : 'Stalemate! The game is a draw.'}
+          </p>
+          <div className="game-over-buttons">
+            <button onClick={onRestart} className="restart-button">
+              Play Again
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="App" style={{
       '--light-square': theme.light,
@@ -783,7 +940,7 @@ function App() {
             <button 
               className="control-button undo"
               onClick={handleUndo}
-              disabled={currentMove === 0 || isGameOver}
+              disabled={moveHistory.length === 0 || isGameOver}
             >
               <span className="icon">↩️</span>
               Undo Move
@@ -840,10 +997,16 @@ function App() {
       </footer>
 
       {isGameOver && (
-        <div className="game-over-message">
-          Game Over! {currentPlayer === 'white' ? 'Black' : 'White'} wins 
-          {moveHistory.length > 0 ? ' by checkmate!' : ' on time!'}
-        </div>
+        <GameOver 
+          result={gameResult}
+          winner={winner}
+          onRestart={() => {
+            setIsGameOver(false)
+            setGameResult(null)
+            setWinner(null)
+            handleRestart()
+          }}
+        />
       )}
 
       {/* Add How to Play modal here as well for access from anywhere */}
@@ -972,6 +1135,14 @@ function Settings({ onClose, currentTheme, setCurrentTheme }) {
   const [notifications, setNotifications] = useState(true)
   const [showMoves, setShowMoves] = useState(true)
   const [showCoordinates, setShowCoordinates] = useState(true)
+
+  // Add this effect to update all audio volumes
+  useEffect(() => {
+    const sounds = [moveSound, captureSound, checkSound, gameStartSound, gameEndSound]
+    sounds.forEach(sound => {
+      sound.volume = volume / 100
+    })
+  }, [volume])
 
   return (
     <div className="settings-container">

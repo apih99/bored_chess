@@ -1,70 +1,158 @@
-# Getting Started with Create React App
+# ♟️ Chess Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern chess game built with React, featuring multiple game modes, customizable themes, and an intuitive interface. 
 
-## Available Scripts
+[Example of the Menu](screenshot/Capture.PNG)
+[Example of the Gameplay](screenshots/gameplay.PNG)
 
-In the project directory, you can run:
+## 🚀 Requirements
 
-### `npm start`
+- Node.js (v14.0.0 or higher)
+- npm (v6.0.0 or higher)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 📁 Project Structure
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```tree
+chess/
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── sounds/
+│       ├── move.mp3
+│       ├── capture.mp3
+│       ├── check.mp3
+│       ├── game-start.mp3
+│       └── game-end.mp3
+├── src/
+│   ├── components/
+│   │   ├── Timer.js
+│   │   └── Achievements.js
+│   ├── ai/
+│   │   └── chessAI.js
+│   ├── App.js
+│   ├── App.css
+│   ├── index.js
+│   └── checkDetection.js
+├── package.json
+└── README.md
+```
 
-### `npm test`
+## ✨ Features
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- 👥 Player vs Player and Player vs Computer modes
+- 🤖 Multiple difficulty levels for AI
+- 🎨 Customizable board themes
+- ✅ Move validation and legal move highlighting
+- ⚡ Check and checkmate detection
+- ↩️ Move history and undo functionality
+- ⏲️ Timer support for rapid games
+- 🔊 Sound effects for moves
+- 🏆 Achievements system
+- 👤 Player profiles
 
-### `npm run build`
+## 🛠️ Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Clone the repository:** 📥
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+git clone [repository-url]
+cd chess
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Install dependencies:** 📦
 
-### `npm run eject`
+```bash
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. **Start the development server:** 🚀
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. **Build for production:** 🏗️
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm run build
+```
 
-## Learn More
+## 🔊 Sound Credits
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Sound effects should be placed in the `public/sounds` directory:
+- 🎵 move.mp3: Piece movement sound
+- 💥 capture.mp3: Piece capture sound
+- ⚠️ check.mp3: Check notification sound
+- 🎮 game-start.mp3: Game start sound
+- 🏁 game-end.mp3: Game end sound
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🌐 Browser Support
 
-### Code Splitting
+- �Chrome Chrome (latest)
+- 🦊 Firefox (latest)
+- 🧭 Safari (latest)
+- 📱 Edge (latest)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🤝 Contributing
 
-### Analyzing the Bundle Size
+1. Fork the repository 🍴
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request 📬
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📄 License
 
-### Making a Progressive Web App
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 👨‍💻 Author
 
-### Advanced Configuration
+Apih99 - hafizcr716@gmail.com
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🙏 Acknowledgments
 
-### Deployment
+- ♟️ Chess piece designs
+- 🎵 Sound effects sources
+- ⚛️ React community
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🎮 Game Controls
 
-### `npm run build` fails to minify
+- ↩️ Undo Move: Takes back the last move
+- 🔄 Restart: Resets the game to initial position
+- ⏸️ Pause: Pauses the game timer
+- 🚪 Exit: Returns to main menu
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🎯 Future Features
+
+- 📱 Mobile responsive design
+- 🌐 Online multiplayer
+- 💾 Save/Load games
+- 📊 Player statistics
+- 🎓 Tutorial mode
+- 🌙 Dark/Light theme toggle
+
+## 💡 Tips
+
+- Use keyboard shortcuts for faster gameplay
+- Study the AI patterns to improve your game
+- Practice different openings
+- Keep an eye on the timer in rapid games
+- Use the undo feature to learn from mistakes
+
+## 🐛 Bug Reports
+
+Found a bug? Please open an issue with the following information:
+- Bug description
+- Steps to reproduce
+- Expected behavior
+- Screenshots (if applicable)
+
+## ⭐ Support
+
+If you like this project, please give it a star! ⭐
+
+## 📫 Contact
+
+For any queries or suggestions, feel free to reach out:
+- 📧 Email: hafizcr716@gmail.com
+- 🐦 Twitter: [apihnine9]
