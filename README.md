@@ -2,8 +2,8 @@
 
 A modern chess game built with React, featuring multiple game modes, customizable themes, and an intuitive interface. Actually I was bored so i created this game.
 
-[Example of the Menu](screenshots/Capture.PNG)
-[Example of the Gameplay](screenshots/gameplay.PNG)
+![Example of the Menu](screenshots/Capture.PNG)
+![Example of the Gameplay](screenshots/gameplay.PNG)
 
 ## 🚀 Requirements
 
