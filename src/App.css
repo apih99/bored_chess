@@ -517,40 +517,43 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .game-setup {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  color: #e2e8f0;
-  width: 300px;
+  background: rgba(30, 41, 59, 0.95);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  width: 400px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .game-setup h2 {
+  color: #f8fafc;
+  font-size: 28px;
   text-align: center;
-  color: #22314b;
-  margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
-.game-setup h3 {
-  color: #d9dde3;
-  margin-bottom: 10px;
-  font-size: 16px;
+.mode-selection {
+  margin-bottom: 2rem;
 }
 
-
-.mode-selection,
-.difficulty-selection,
-.time-selection {
-  margin-bottom: 20px;
+.mode-selection h3 {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .mode-buttons,
 .difficulty-buttons,
 .time-buttons {
   display: grid;
-  gap: 8px;
   grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
 }
 
 .time-buttons {
@@ -560,142 +563,138 @@ h1, h2, h3, h4, h5, h6 {
 .mode-button,
 .difficulty-button,
 .time-button {
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  color: #e2e8f0;
   font-weight: 500;
-  transition: all 0.2s;
-  background: #edf2f7;
-  color: #4a5568;
-}
-
-.mode-button.active,
-.difficulty-button.active,
-.time-button.active {
-  background: #4a5568;
-  color: white;
-  transform: scale(1.05);
-}
-
-.difficulty-button.beginner.active { background: #48bb78; }
-.difficulty-button.intermediate.active { background: #4299e1; }
-.difficulty-button.advanced.active { background: #ed8936; }
-.difficulty-button.expert.active { background: #e53e3e; }
-
-.start-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 4px;
-  background: #48bb78;
-  color: white;
-  font-weight: 600;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: background 0.2s;
-  margin-top: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.start-button:hover {
-  background: #38a169;
-}
-
-/* Add hover effects */
 .mode-button:hover,
 .difficulty-button:hover,
 .time-button:hover {
-  background: #e2e8f0;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
-.mode-button.active:hover,
-.time-button.active:hover {
-  background: #2d3748;
+.mode-button.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #60a5fa;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
 }
 
-.difficulty-button.beginner:hover { background: #38a169; }
-.difficulty-button.intermediate:hover { background: #3182ce; }
-.difficulty-button.advanced:hover { background: #dd6b20; }
-.difficulty-button.expert:hover { background: #c53030; }
-
-.game-status {
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  min-height: 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  color: #e2e8f0;
-  text-align: center;
-  margin: 10px 0;
+/* Difficulty button variants */
+.difficulty-button.beginner.active {
+  background: #22c55e;
+  border-color: #4ade80;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
 }
 
-.ai-thinking {
-  color: #4a5568;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+.difficulty-button.intermediate.active {
+  background: #f59e0b;
+  border-color: #fbbf24;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
 }
 
-.ai-thinking::after {
-  content: '';
-  width: 12px;
-  height: 12px;
-  border: 2px solid #4a5568;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.difficulty-button.advanced.active {
+  background: #ef4444;
+  border-color: #f87171;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
 }
 
-.player-turn {
+.difficulty-button.expert.active {
+  background: #8b5cf6;
+  border-color: #a78bfa;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+.time-button.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #60a5fa;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.start-button {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
   font-weight: 600;
-  color: #2d3748;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px -1px rgba(0, 0, 0, 0.2), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
 }
 
-/* Add disabled state for board squares */
-.square.disabled {
+.start-button:active {
+  transform: translateY(0);
+}
+
+/* Current player display */
+.current-player {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Add subtle animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.game-setup {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Add hover states */
+.mode-button:hover,
+.difficulty-button:hover,
+.time-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Add disabled state */
+.mode-button:disabled,
+.difficulty-button:disabled,
+.time-button:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-  opacity: 0.8;
+  transform: none;
+  box-shadow: none;
 }
 
-.moving-piece {
-  position: absolute;
-  width: 60px; /* Match your square size */
-  height: 60px; /* Match your square size */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px; /* Match your piece size */
-  pointer-events: none;
-  z-index: 100;
-  transform-origin: center;
-  animation: movePiece 300ms ease-in-out forwards;
-}
-
-@keyframes movePiece {
-  0% {
-    transform: translate(
-      calc(var(--start-col) * 100%),
-      calc(var(--start-row) * 100%)
-    );
-  }
-  100% {
-    transform: translate(
-      calc(var(--end-col) * 100%),
-      calc(var(--end-row) * 100%)
-    );
-  }
+/* Add focus states for accessibility */
+.mode-button:focus,
+.difficulty-button:focus,
+.time-button:focus,
+.start-button:focus {
+  outline: none;
+  ring: 2px;
+  ring-offset: 2px;
+  ring-color: #3b82f6;
 }
 
 /* Add subtle scaling effect */
@@ -1069,7 +1068,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .start-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .start-button:active {
@@ -2255,7 +2254,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .mode-selection h3 {
   margin-bottom: 1rem;
-  color: #333;
+  color: #ffffff;
 }
 
 .mode-buttons {
@@ -2269,7 +2268,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 2px solid #ccc;
   border-radius: 8px;
   background: white;
-  color: #333;
+  color: #313131;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
